@@ -8,6 +8,10 @@ import (
 
 func main() {
 	fmt.Println("Starting Wisbday. Let's buckle-up to handle traffic bois")
+
+	database := Database{}
+	database.NewDatabase()
+
 	bootstrapWebserver()
 }
 
@@ -22,4 +26,9 @@ func bootstrapWebserver() {
 
 func initRoutes(r *mux.Router) {
 	r.HandleFunc("/", IndexHandler)
+
+	r.HandleFunc("/auth/login", ShowAuthLogin).Methods("GET")
+	r.HandleFunc("/auth/register", ShowAuthRegister).Methods("GET")
+	r.HandleFunc("/auth/login", HandleAuthLogin).Methods("POST")
+	r.HandleFunc("/auth/register", HandleAuthRegister).Methods("POST")
 }
