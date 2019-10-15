@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
 )
 
 func main() {
 	fmt.Println("Starting Wisbday. Let's buckle-up to handle traffic bois")
 
-	database := Database{}
-	database.NewDatabase()
-
+	NewDatabase()
 	bootstrapWebserver()
 }
 
@@ -19,7 +19,7 @@ func bootstrapWebserver() {
 	r := mux.NewRouter()
 	initRoutes(r)
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":8080", handlers.LoggingHandler(os.Stdout, r)); err != nil {
 		panic("Cannot bind to *:8080 and listen for connections")
 	}
 }

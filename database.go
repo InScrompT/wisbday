@@ -7,12 +7,16 @@ import (
 	"time"
 )
 
-var err error
+var (
+	DB *gorm.DB
+	err error
+)
 
 type User struct {
 	gorm.Model
 	Type     string
 	Email    string `gorm:"type:varchar(100);unique_index"`
+	Wishes	 []Wish
 	Username string `gorm:"type:unique_index"`
 	Password string
 }
@@ -28,18 +32,14 @@ type Wish struct {
 	DateTime time.Time
 }
 
-type Database struct {
-	DB *gorm.DB
-}
-
-func (d *Database) NewDatabase() {
-	d.DB, err = gorm.Open("sqlite", "wisbday.sqlite")
+func NewDatabase() {
+	DB, err = gorm.Open("sqlite", "wisbday.sqlite")
 	if err != nil {
 		panic("Could't connect to database")
 	}
 
-	defer d.DB.Close()
-	d.DB.AutoMigrate(&User{}, &Wish{})
+	defer DB.Close()
+	DB.AutoMigrate(&User{}, &Wish{})
 
 	fmt.Println("Connected to database successfully")
 }
