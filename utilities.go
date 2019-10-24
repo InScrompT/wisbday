@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
+	"io"
 )
 
 type Basic struct {
@@ -21,9 +21,8 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func ErrorToClientJsonHTTP(w http.ResponseWriter, theError string) {
-	w.WriteHeader(http.StatusInternalServerError)
-	if err := json.NewEncoder(w).Encode(Basic{theError}); err != nil {
+func WriteAsJSON(w io.Writer, message string) {
+	if err := json.NewEncoder(w).Encode(Basic{message}); err != nil {
 		fmt.Println("Couldn't respond back with JSON value")
 	}
 }

@@ -7,21 +7,15 @@ import (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	if err := json.NewEncoder(w).Encode(Basic{"Hello World. This is anonymous structure"}); err != nil {
-		fmt.Println("Couldn't respond back with JSON value")
-	}
+	WriteAsJSON(w, "Hello World. This is anonymous structure")
 }
 
 func ShowAuthLogin(w http.ResponseWriter, r *http.Request) {
-	if err := json.NewEncoder(w).Encode(Basic{"[GET] -> /auth/login"}); err != nil {
-		fmt.Println("Couldn't respond back with JSON value")
-	}
+	WriteAsJSON(w, "[GET] -> /auth/login")
 }
 
 func ShowAuthRegister(w http.ResponseWriter, r *http.Request) {
-	if err := json.NewEncoder(w).Encode(Basic{"[GET] -> /auth/register"}); err != nil {
-		fmt.Println("Couldn't respond back with JSON value")
-	}
+	WriteAsJSON(w, "[GET] -> /auth/register")
 }
 
 func HandleAuthLogin(w http.ResponseWriter, r *http.Request) {
@@ -36,21 +30,18 @@ func HandleAuthLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if DB.Where(&User{Email: theForm.Email}).Or(&User{Username: theForm.Email}).First(&theUser).RecordNotFound() {
-		ErrorToClientJsonHTTP(w, "The user associated with this email or username is not found")
+		WriteAsJSON(w, "The user associated with this email or username is not found")
 		return
 	}
 
 	if !CheckPasswordHash(theForm.Password, theUser.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
-		if err = json.NewEncoder(w).Encode(Basic{"The password you entered is wrong"}); err != nil {
-			fmt.Println("Couldn't respond back with JSON value")
-		}
+		WriteAsJSON(w, "The password you entered is wrong")
+
 		return
 	}
 
-	if err = json.NewEncoder(w).Encode(Basic{"You are identified. Logged in (Dummy)"}); err != nil {
-		fmt.Println("Couldn't respond back with JSON value")
-	}
+	WriteAsJSON(w, "You are identified. Logged in (Dummy)")
 }
 
 func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
