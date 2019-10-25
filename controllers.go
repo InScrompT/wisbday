@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html"
 	"net/http"
 )
 
@@ -23,8 +24,8 @@ func HandleAuthLogin(w http.ResponseWriter, r *http.Request) {
 
 	theUser := &User{}
 	theForm := &loginForm{
-		Email: r.FormValue("email"), // Could be either a username or an email ID
-		Password: r.FormValue("password"),
+		Email: html.EscapeString(r.FormValue("email")), // Could be either a username or an email ID
+		Password: html.EscapeString(r.FormValue("password")),
 	}
 
 	if DB.Where(&User{Email: theForm.Email}).Or(&User{Username: theForm.Email}).First(&theUser).RecordNotFound() {
@@ -52,8 +53,8 @@ func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	DB.Create(User{
-		Email: r.FormValue("email"),
-		Username: r.FormValue("username"),
+		Email: html.EscapeString(r.FormValue("email")),
+		Username: html.EscapeString(r.FormValue("username")),
 		Password: hashedPassword,
 	})
 
