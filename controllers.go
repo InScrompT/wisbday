@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -45,15 +43,19 @@ func HandleAuthLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
-	type registrationForm struct {
-		Email, Username, Password string
+	hashedPassword, err := HashPassword(r.FormValue("password"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		WriteAsJSON(w, "Unable to create an account")
+
+		return
 	}
 
-	if err = json.NewEncoder(w).Encode(registrationForm{
-		r.FormValue("email"),
-		r.FormValue("username"),
-		r.FormValue("password"),
-	}); err != nil {
-		fmt.Println("Couldn't respond back with JSON value")
-	}
+	DB.Create(User{
+		Email: r.FormValue("email"),
+		Username: r.FormValue("username"),
+		Password: hashedPassword,
+	})
+
+	WriteAsJSON(w, "User created successfully")
 }

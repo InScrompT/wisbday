@@ -14,11 +14,11 @@ var (
 
 type User struct {
 	gorm.Model
-	Type     string
-	Email    string `gorm:"type:varchar(100);unique_index"`
+	Type     string `gorm:"default:0"`
+	Email    string `gorm:"type:varchar(100);unique_index;not null"`
 	Wishes	 []Wish
-	Username string `gorm:"type:unique_index"`
-	Password string
+	Username string `gorm:"type:unique_index;not null"`
+	Password string `gorm:"not null"`
 }
 
 type Wish struct {
@@ -38,7 +38,12 @@ func NewDatabase() {
 		panic("Could't connect to database")
 	}
 
-	defer DB.Close()
+	defer func() {
+		if err := DB.Close(); err != nil {
+			panic("Could not close the database connection")
+		}
+	}()
+
 	DB.AutoMigrate(&User{}, &Wish{})
 
 	fmt.Println("Connected to database successfully")
