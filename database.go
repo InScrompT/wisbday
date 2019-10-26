@@ -23,7 +23,7 @@ type User struct {
 
 type Wish struct {
 	gorm.Model
-	UserID   int
+	UserID   uint
 	User     User
 	Name     string
 	Email    string

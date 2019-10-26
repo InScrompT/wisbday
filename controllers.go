@@ -60,3 +60,20 @@ func HandleAuthRegister(w http.ResponseWriter, r *http.Request) {
 
 	WriteAsJSON(w, "User created successfully")
 }
+
+// TODO: Yet dummy, needs real stuff
+func HandleAddWish(w http.ResponseWriter, r *http.Request) {
+	theUser := User{}
+
+	DB.First(theUser)
+	DB.Create(&Wish{
+		UserID: theUser.ID,
+		User: theUser,
+		Name: "A friend",
+		Email: "afriend@dumbgmail.com",
+		Message: "Die, don't party. You succ",
+		Number: "6969696969",
+	})
+
+	WriteAsJSON(w, "A new wish entry to your friend has been added")
+}
